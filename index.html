@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!--The oldest bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.js"></script>
+</head>
+<body style="padding-left: 30%; padding-right: 30%;">
+    <center>
+        <br>
+    <h1>Selfie!
+    </h1>
+    <br>
+    <p>There will be a popup saying "Allow index.html to access your microphone" click <kbd style="">Allow</kbd>.</p>
+    <hr>
+    <label for="cheese">Say "Cheese!" to take a selfie!</label>
+    <br>
+    <textarea id="cheese"></textarea>
+    <br>
+    <button onclick="start_function()" class="btn btn-success" id="start">Start</button>
+    <hr>
+    <div class="preview">
+        
+    </div>
+    <div class="result">
+        
+    </div>
+    <a href="" style="display: none;" id="download">Download Selfie</a>
+    </center>
+    <script>
+        var SpeechRecognition = window.webkitSpeechRecognition;
+
+        var recognition = new SpeechRecognition();
+
+        const TextBox = document.getElementById("cheese");
+
+        function start_function() {
+            TextBox.innerHTML = "";
+            recognition.start();
+        }
+
+        recognition.onresult = function (event) {
+            console.log(event);
+            var content = event.results[0][0].transcript;
+            TextBox.innerHTML = content;
+            console.log(content);
+            if (content == "cheese" || content=="Cheese") {
+                speak();
+            }
+        }
+
+        preview = document.getElementById("preview");
+
+        function speak() {
+            
+            synth = window.speechSynthesis;
+            speak_data = "Smile for the camera!";
+            var utterThis =  new SpeechSynthesisUtterance(speak_data);
+            synth.speak(utterThis);
+            Webcam.attach(preview);
+            setTimeout(function(){
+                console.log("SpeakSynthesis");
+                take_selfie();
+                save();
+            }, 3000);
+        }
+
+        
+        Webcam.set({
+            width:300,
+            height:300,
+            image_format:"jpeg",
+            image_quality:90,
+        })
+
+        function take_selfie() {
+            console.log("Webcam.snap();")
+            Webcam.snap(function(data_uri) {
+                document.getElementById("result").innerHTML = '<img id="selfie_image" src="'+data_uri+'"/>';
+            });
+            
+        }
+
+        function save() {
+            link = document.getElementById("download");
+            image = document.getElementById("selfie_image").src;
+            link.href = image;
+            link.click();
+        }
+    </script>
+    <script async src="https://drv.tw/inc/wd.js"></script>
+</body>
+</html>
